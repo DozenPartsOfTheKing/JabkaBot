@@ -68,7 +68,7 @@ async def on_user_message_private(message: types.Message):
     await send_sticker_with_caption(message.chat.id)
 
 # — Групповые handlers —
-@dp.message(F.chat.type.in_([ChatType.GROUP, ChatType.SUPERGROUP]), F.text.regexp(r"(?i)\b(ква|жабка)\b"))
+@dp.message(F.chat.type.in_([ChatType.GROUP, ChatType.SUPERGROUP]), F.text.regexp(r"(?i)(ква|жабка)"))
 async def on_group_message(message: types.Message):
     if not await bot_is_admin(message.chat.id):
         return
