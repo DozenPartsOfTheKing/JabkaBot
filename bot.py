@@ -14,6 +14,26 @@ from stickers import STICKER_POOL  # ваш пул file_id стикеров
 
 TOKEN = os.getenv("TOKEN")
 
+# ——— Пул звуков жабок ———
+SOUND_POOL = [
+    "sounds/zvuk.mp3",
+    "sounds/zvuk-lyagushki-korotkiy-28632.mp3",
+    "sounds/zvonkoe-strekotanie-drevesnoy-lyagushki.mp3",
+    "sounds/zvonkaya-lyagushka-chem-to-nedovolna.mp3",
+    "sounds/xiaomi_frog-1.mp3",
+    "sounds/odinokaya-lyagushka-sidit-v-trave-i-kvakaet.mp3",
+    "sounds/obyichnoe-kvakanie-jabyi.mp3",
+    "sounds/nestandartnoe-kvakanie-kakoy-to-neponyatnoy-lyagushki.mp3",
+    "sounds/lyagushka-na-liste-lotosa-nazyivaetsya-zvukovyim-effektom-41440.mp3",
+    "sounds/lyagushka-izdaet-zvuki-37046.mp3",
+    "sounds/lyagushache-bolotnoe-logovo.mp3",
+    "sounds/kvakanie-ogromnoy-lyagushki.mp3",
+    "sounds/jutkiy-zvuk-kvakaniya-lyagushki-byika.mp3",
+    "sounds/drevesnaya-lyagushka-pisklyavo-kvakaet.mp3",
+    "sounds/chastoe-kvakanie-malenkoy-lyagushki.mp3",
+    "sounds/byistryie-zvuki-kvakaniya.mp3"
+]
+
 # ——— Подписи под стикерами ———
 CAPTION_POOL = [
     "Ква-ква!", "Квааааа!", "Ква-кря-ква!", "Ква? Ква!",
@@ -37,7 +57,14 @@ inline_kb.adjust(1)
 
 async def send_sticker_with_caption(chat_id: int, caption: str = None):
     sticker = random.choice(STICKER_POOL)
+    sound = random.choice(SOUND_POOL)
+    
     await bot.send_sticker(chat_id, sticker)
+    
+    # Отправляем звук жабки
+    with open(sound, 'rb') as audio_file:
+        await bot.send_voice(chat_id, audio_file)
+    
     text = caption or random.choice(CAPTION_POOL)
     await bot.send_message(chat_id, text)
 
