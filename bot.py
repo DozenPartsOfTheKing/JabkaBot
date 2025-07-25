@@ -6,6 +6,7 @@ from aiogram import Bot, Dispatcher, types, F
 from aiogram.filters import Command
 from aiogram.enums import ChatType
 from aiogram.utils.keyboard import ReplyKeyboardBuilder, InlineKeyboardBuilder
+from aiogram.types import FSInputFile
 import dotenv
 
 dotenv.load_dotenv()
@@ -59,12 +60,14 @@ async def send_sticker_with_caption(chat_id: int, caption: str = None):
     sticker = random.choice(STICKER_POOL)
     sound = random.choice(SOUND_POOL)
     
+    # Отправляем стикер
     await bot.send_sticker(chat_id, sticker)
     
     # Отправляем звук жабки
-    with open(sound, 'rb') as audio_file:
-        await bot.send_voice(chat_id, audio_file)
+    audio_file = FSInputFile(sound)
+    await bot.send_voice(chat_id, audio_file)
     
+    # Отправляем текст
     text = caption or random.choice(CAPTION_POOL)
     await bot.send_message(chat_id, text)
 
@@ -111,8 +114,7 @@ async def on_group_message(message: types.Message):
             await send_sticker_with_caption(message.chat.id)
         except Exception as e:
             logging.error(f"Error in handler: {e}")
-            # Отправляем стикер без проверки админских прав для отладки
-            await send_sticker_with_caption(message.chat.id)
+            # Не отправляем стикер при ошибке - это избегает дублирования
 
 if __name__ == "__main__":
     logging.info("Бот запущен — пусть квакает!")
