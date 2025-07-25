@@ -68,33 +68,24 @@ async def on_user_message_private(message: types.Message):
     await send_sticker_with_caption(message.chat.id)
 
 # — Групповые handlers —
-@dp.message(F.chat.type.in_([ChatType.GROUP, ChatType.SUPERGROUP]), F.text.regexp(r"(?i)ква"))
-async def on_group_message_kva(message: types.Message):
-    logging.info(f"Handler KVA triggered for message: '{message.text}'")
-    try:
-        is_admin = await bot_is_admin(message.chat.id)
-        logging.info(f"Bot is admin: {is_admin}")
-        if not is_admin:
-            return
-        await send_sticker_with_caption(message.chat.id)
-    except Exception as e:
-        logging.error(f"Error in KVA handler: {e}")
-        # Отправляем стикер без проверки админских прав для отладки
-        await send_sticker_with_caption(message.chat.id)
-
-@dp.message(F.chat.type.in_([ChatType.GROUP, ChatType.SUPERGROUP]), F.text.regexp(r"(?i)жабка"))
-async def on_group_message_jabka(message: types.Message):
-    logging.info(f"Handler JABKA triggered for message: '{message.text}'")
-    try:
-        is_admin = await bot_is_admin(message.chat.id)
-        logging.info(f"Bot is admin: {is_admin}")
-        if not is_admin:
-            return
-        await send_sticker_with_caption(message.chat.id)
-    except Exception as e:
-        logging.error(f"Error in JABKA handler: {e}")
-        # Отправляем стикер без проверки админских прав для отладки
-        await send_sticker_with_caption(message.chat.id)
+@dp.message(F.chat.type.in_([ChatType.GROUP, ChatType.SUPERGROUP]))
+async def on_group_message(message: types.Message):
+    if not message.text:
+        return
+    
+    text_lower = message.text.lower()
+    if "ква" in text_lower or "жабка" in text_lower:
+        logging.info(f"Handler triggered for message: '{message.text}'")
+        try:
+            is_admin = await bot_is_admin(message.chat.id)
+            logging.info(f"Bot is admin: {is_admin}")
+            if not is_admin:
+                return
+            await send_sticker_with_caption(message.chat.id)
+        except Exception as e:
+            logging.error(f"Error in handler: {e}")
+            # Отправляем стикер без проверки админских прав для отладки
+            await send_sticker_with_caption(message.chat.id)
 
 if __name__ == "__main__":
     logging.info("Бот запущен — пусть квакает!")
